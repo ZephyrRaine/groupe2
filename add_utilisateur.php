@@ -13,7 +13,7 @@
 
     <div class="container">
         <?php require_once(__DIR__ . '/header.php'); ?>
-        <h1>Site To-Do List</h1>
+        <h1>Créer compte</h1>
 
         <form action="submit_add_utilisateur.php" method="POST">
             <div class="mb-3">
@@ -35,7 +35,7 @@
             <button type="submit" class="btn btn-primary">Ajouter utilisateur</button>
         </form>
     </div>
-     <!-- Inclusion du bas de page du site -->
-     <?php require_once(__DIR__ . '/footer.php'); ?>
+
+    <?php require_once(__DIR__ . '/footer.php'); ?>
 </body>
 </html>
