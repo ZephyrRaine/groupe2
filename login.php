@@ -20,6 +20,7 @@
             <input type="mot_de_passe" class="form-control" id="mot_de_passe" name="mot_de_passe">
         </div>
         <button type="submit" class="btn btn-primary">Envoyer</button>
+        <a href="add_utilisateur.php" class="btn btn-primary">Créer compte</a>
     </form>
     <!-- Si utilisateur/trice bien connectée on affiche un message de succès -->
 <?php else : ?>
