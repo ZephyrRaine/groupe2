@@ -27,4 +27,5 @@
     <div class="alert alert-success" role="alert">
         Bonjour <?php echo $_SESSION['LOGGED_USER']['email']; ?> et bienvenue sur le site !
     </div>
+    <?php redirectToUrl("visual_taches.php") ?>
 <?php endif; ?>
