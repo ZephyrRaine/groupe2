@@ -5,7 +5,7 @@ require_once(__DIR__ . '/config/mysql.php');
 // Vérification si le formulaire est soumis
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
-    $password = $_POST['password'];
+    $password = $_POST['mot_de_passe'];
 
     try {
         // Vérification des informations de connexion dans la table utilisateurs
@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         // Vérification du mot de passe
-        if ($user) {
+        if ($user && password_verify($password, $user['mot_de_passe'])) {
             // Connexion réussie : enregistrer l'utilisateur dans la session
             $_SESSION['LOGGED_USER'] = $user;
 
