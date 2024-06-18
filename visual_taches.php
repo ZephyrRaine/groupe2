@@ -2,10 +2,24 @@
 session_start();
 require_once(__DIR__ . '/config/mysql.php');
 
-// Fonction pour récupérer toutes les tâches
-function getAllTasks() {
+// Fonction pour récupérer toutes les tâches avec filtres
+function getTasks($priorityFilter = '', $statusFilter = '') {
     global $dbh;
-    $stmt = $dbh->query('SELECT * FROM taches');
+    $sql = 'SELECT * FROM taches WHERE 1=1';
+    if ($priorityFilter) {
+        $sql .= ' AND priorite = :priorite';
+    }
+    if ($statusFilter) {
+        $sql .= ' AND statut = :statut';
+    }
+    $stmt = $dbh->prepare($sql);
+    if ($priorityFilter) {
+        $stmt->bindParam(':priorite', $priorityFilter);
+    }
+    if ($statusFilter) {
+        $stmt->bindParam(':statut', $statusFilter);
+    }
+    $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
@@ -18,8 +32,12 @@ function updateTaskStatus($taskId, $newStatus) {
     return $stmt->execute();
 }
 
-// Charger toutes les tâches
-$tasks = getAllTasks();
+// Initialiser les filtres
+$priorityFilter = isset($_GET['priorite']) ? $_GET['priorite'] : '';
+$statusFilter = isset($_GET['statut']) ? $_GET['statut'] : '';
+
+// Charger les tâches avec filtres
+$tasks = getTasks($priorityFilter, $statusFilter);
 
 // Vérification si une action de mise à jour de statut est demandée
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_status') {
@@ -47,11 +65,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     <?php require_once(__DIR__ . '/header.php'); ?>
     <h1>Visualisation des tâches</h1>
 
+    <!-- Formulaire de filtrage -->
+    <form method="GET" action="visual_taches.php" class="row g-3 mb-3">
+        <div class="col-md-4">
+            <label for="priorite" class="form-label">Priorité</label>
+            <select id="priorite" name="priorite" class="form-select">
+                <option value="">Toutes</option>
+                <option value="basse" <?php echo $priorityFilter == 'basse' ? 'selected' : ''; ?>>Basse</option>
+                <option value="moyenne" <?php echo $priorityFilter == 'moyenne' ? 'selected' : ''; ?>>Moyenne</option>
+                <option value="haute" <?php echo $priorityFilter == 'haute' ? 'selected' : ''; ?>>Haute</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="statut" class="form-label">Statut</label>
+            <select id="statut" name="statut" class="form-select">
+                <option value="">Tous</option>
+                <option value="en cours" <?php echo $statusFilter == 'en cours' ? 'selected' : ''; ?>>En cours</option>
+                <option value="terminé" <?php echo $statusFilter == 'terminé' ? 'selected' : ''; ?>>Terminé</option>
+            </select>
+        </div>
+        <div class="col-md-4 align-self-end">
+            <button type="submit" class="btn btn-primary">Filtrer</button>
+        </div>
+    </form>
+
     <!-- Affichage des tâches avec option de mise à jour de statut -->
     <table class="table">
         <thead>
             <tr>
-                <th scope="col">ID</th>
                 <th scope="col">Nom</th>
                 <th scope="col">Description</th>
                 <th scope="col">Date de création</th>
@@ -64,7 +105,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         <tbody>
             <?php foreach ($tasks as $task) : ?>
                 <tr>
-                    <th scope="row"><?php echo $task['id']; ?></th>
                     <td><?php echo $task['nom']; ?></td>
                     <td><?php echo $task['description']; ?></td>
                     <td><?php echo $task['date_creation']; ?></td>
@@ -73,11 +113,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                     <td><?php echo $task['priorite']; ?></td>
                     <td>
                         <!-- Formulaire pour mettre à jour le statut de la tâche -->
+                        <?php if ($task['statut'] != 'terminé') : ?>
                         <form action="visual_taches.php" method="POST">
                             <input type="hidden" name="action" value="update_status">
                             <input type="hidden" name="task_id" value="<?php echo $task['id']; ?>">
                             <button type="submit" class="btn btn-sm btn-success">Marquer comme terminé</button>
                         </form>
+                        <?php endif; ?>
                     </td>
                 </tr>
             <?php endforeach; ?>
