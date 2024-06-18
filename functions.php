@@ -94,4 +94,11 @@ function createTask($name, $description, $date_creation, $date_echeance, $statut
     return $stmt->execute();
 }
 
+function updateTaskStatus($id, $newStatus) {
+    global $dbh;
+    $stmt = $dbh->prepare('UPDATE taches SET statut = :statut WHERE id = :id');
+    $stmt->bindParam(':statut', $newStatus);
+    $stmt->bindParam(':id', $id);
+    return $stmt->execute();
+}
 ?>
