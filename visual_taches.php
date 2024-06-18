@@ -1,36 +1,7 @@
 <?php
 session_start();
 require_once(__DIR__ . '/config/mysql.php');
-
-// Fonction pour récupérer toutes les tâches avec filtres
-function getTasks($priorityFilter = '', $statusFilter = '') {
-    global $dbh;
-    $sql = 'SELECT * FROM taches WHERE 1=1';
-    if ($priorityFilter) {
-        $sql .= ' AND priorite = :priorite';
-    }
-    if ($statusFilter) {
-        $sql .= ' AND statut = :statut';
-    }
-    $stmt = $dbh->prepare($sql);
-    if ($priorityFilter) {
-        $stmt->bindParam(':priorite', $priorityFilter);
-    }
-    if ($statusFilter) {
-        $stmt->bindParam(':statut', $statusFilter);
-    }
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
-
-// Fonction pour mettre à jour le statut d'une tâche
-function updateTaskStatus($taskId, $newStatus) {
-    global $dbh;
-    $stmt = $dbh->prepare('UPDATE taches SET statut = :statut WHERE id = :id');
-    $stmt->bindParam(':statut', $newStatus);
-    $stmt->bindParam(':id', $taskId);
-    return $stmt->execute();
-}
+require_once(__DIR__ . '/functions.php');
 
 // Initialiser les filtres
 $priorityFilter = isset($_GET['priorite']) ? $_GET['priorite'] : '';
@@ -40,13 +11,22 @@ $statusFilter = isset($_GET['statut']) ? $_GET['statut'] : '';
 $tasks = getTasks($priorityFilter, $statusFilter);
 
 // Vérification si une action de mise à jour de statut est demandée
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_status') {
-    $taskId = $_POST['task_id'];
-    $newStatus = 'terminé'; // Mettre à jour le statut à "terminé"
-    updateTaskStatus($taskId, $newStatus);
-    // Redirection pour éviter de re-traiter le formulaire lors d'un rechargement de la page
-    header('Location: visual_taches.php');
-    exit;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['action'])) {
+        $action = $_POST['action'];
+        $taskId = $_POST['task_id'];
+
+        if ($action === 'update_status') {
+            $newStatus = 'terminé'; // Mettre à jour le statut à "terminé"
+            updateTaskStatus($taskId, $newStatus);
+        } elseif ($action === 'delete_task') {
+            deleteTask($taskId);
+        }
+
+        // Redirection pour éviter de re-traiter le formulaire lors d'un rechargement de la page
+        header('Location: visual_taches.php');
+        exit;
+    }
 }
 ?>
 
@@ -64,6 +44,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 <div class="container">
     <?php require_once(__DIR__ . '/header.php'); ?>
     <h1>Visualisation des tâches</h1>
+
+    <!-- Bouton pour créer une nouvelle tâche -->
+    <a href="create_task.php" class="btn btn-primary mb-3">Créer une nouvelle tâche</a>
 
     <!-- Formulaire de filtrage -->
     <form method="GET" action="visual_taches.php" class="row g-3 mb-3">
@@ -114,12 +97,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                     <td>
                         <!-- Formulaire pour mettre à jour le statut de la tâche -->
                         <?php if ($task['statut'] != 'terminé') : ?>
-                        <form action="visual_taches.php" method="POST">
+                        <form action="visual_taches.php" method="POST" style="display:inline;">
                             <input type="hidden" name="action" value="update_status">
                             <input type="hidden" name="task_id" value="<?php echo $task['id']; ?>">
                             <button type="submit" class="btn btn-sm btn-success">Marquer comme terminé</button>
                         </form>
                         <?php endif; ?>
+                        <a href="edit_task.php?id=<?php echo $task['id']; ?>" class="btn btn-sm btn-warning">Modifier</a>
+                        <form action="visual_taches.php" method="POST" style="display:inline;">
+                            <input type="hidden" name="action" value="delete_task">
+                            <input type="hidden" name="task_id" value="<?php echo $task['id']; ?>">
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?');">Supprimer</button>
+                        </form>
                     </td>
                 </tr>
             <?php endforeach; ?>
