@@ -1,4 +1,5 @@
 <?php
+
 require_once(__DIR__ . '/config/mysql.php');
 
 function displayAuthor(string $authorEmail, array $users): string {
@@ -54,10 +55,22 @@ function getTasks($priorityFilter = '', $statusFilter = '') {
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function updateTaskStatus($taskId, $newStatus) {
+function getTaskById($taskId) {
     global $dbh;
-    $stmt = $dbh->prepare('UPDATE taches SET statut = :statut WHERE id = :id');
-    $stmt->bindParam(':statut', $newStatus);
+    $stmt = $dbh->prepare('SELECT * FROM taches WHERE id = :id');
+    $stmt->bindParam(':id', $taskId);
+    $stmt->execute();
+    return $stmt->fetch(PDO::FETCH_ASSOC); // Retourne les données de la tâche ou NULL si non trouvée
+}
+
+function updateTask($taskId, $nom, $description, $date_echeance, $statut, $priorite) {
+    global $dbh;
+    $stmt = $dbh->prepare('UPDATE taches SET nom = :nom, description = :description, date_echeance = :date_echeance, statut = :statut, priorite = :priorite WHERE id = :id');
+    $stmt->bindParam(':nom', $nom);
+    $stmt->bindParam(':description', $description);
+    $stmt->bindParam(':date_echeance', $date_echeance);
+    $stmt->bindParam(':statut', $statut);
+    $stmt->bindParam(':priorite', $priorite);
     $stmt->bindParam(':id', $taskId);
     return $stmt->execute();
 }
@@ -80,4 +93,5 @@ function createTask($name, $description, $date_creation, $date_echeance, $statut
     $stmt->bindParam(':priorite', $priorite);
     return $stmt->execute();
 }
+
 ?>
