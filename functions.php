@@ -101,4 +101,48 @@ function updateTaskStatus($id, $newStatus) {
     $stmt->bindParam(':id', $id);
     return $stmt->execute();
 }
+
+function getProjects($statusFilter = '') {
+    global $dbh;
+    $sql = "SELECT id, nom, description, date_debut FROM projets";
+    if ($statusFilter) {
+        $sql .= " WHERE statut = :statut";
+        $stmt = $dbh->prepare($sql);
+        $stmt->bindParam(':statut', $statusFilter);
+        $stmt->execute();
+    } else {
+        $stmt = $dbh->query($sql);
+    }
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function getProjectById($id) {
+    global $dbh;
+    $sql = "SELECT id, nom, description, date_debut, date_fin FROM projets WHERE id = :id";
+    $stmt = $dbh->prepare($sql);
+    $stmt->bindParam(':id', $id);
+    $stmt->execute();
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+function updateProject($id, $nom, $description, $date_debut, $date_fin) {
+    global $dbh;
+    $sql = "UPDATE projets SET nom = :nom, description = :description, date_debut = :date_debut, date_fin = :date_fin WHERE id = :id";
+    $stmt = $dbh->prepare($sql);
+    $stmt->bindParam(':nom', $nom);
+    $stmt->bindParam(':description', $description);
+    $stmt->bindParam(':date_debut', $date_debut);
+    $stmt->bindParam(':date_fin', $date_fin);
+    $stmt->bindParam(':id', $id);
+    $stmt->execute();
+}
+
+function deleteProject($id) {
+    global $dbh;
+    $sql = "DELETE FROM projets WHERE id = :id";
+    $stmt = $dbh->prepare($sql);
+    $stmt->bindParam(':id', $id);
+    $stmt->execute();
+}
+
 ?>
