@@ -48,6 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- Bouton pour créer une nouvelle tâche -->
     <a href="create_task.php" class="btn btn-primary mb-3">Créer une nouvelle tâche</a>
 
+     <!-- Bouton pour créer une nouvelle tâche -->
+     <a href="categories.php" class="btn btn-primary mb-3">Créer une nouvelle catégorie</a>
+
     <!-- Formulaire de filtrage -->
     <form method="GET" action="visual_taches.php" class="row g-3 mb-3">
         <div class="col-md-4">
