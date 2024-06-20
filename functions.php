@@ -35,14 +35,15 @@ function redirectToUrl(string $url): never {
     exit();
 }
 
-function getTasks($priorityFilter = '', $statusFilter = '') {
+function getTasks($priorityFilter = '', $statusFilter = '') 
+{
     global $dbh;
-    $sql = 'SELECT * FROM taches WHERE 1=1';
+    $sql = 'SELECT taches.nom FROM taches JOIN categories ON taches.id_categorie = categories.id WHERE 1=1';
     if ($priorityFilter) {
-        $sql .= ' AND priorite = :priorite';
+        $sql .= ' AND taches.priorite = :priorite';
     }
     if ($statusFilter) {
-        $sql .= ' AND statut = :statut';
+        $sql .= ' AND taches.statut = :statut';
     }
     $stmt = $dbh->prepare($sql);
     if ($priorityFilter) {

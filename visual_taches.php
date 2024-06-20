@@ -9,6 +9,7 @@ $statusFilter = isset($_GET['statut']) ? $_GET['statut'] : '';
 
 // Charger les tâches avec filtres
 $tasks = getTasks($priorityFilter, $statusFilter);
+print_r($tasks);
 
 // Vérification si une action de mise à jour de statut est demandée
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -48,8 +49,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- Bouton pour créer une nouvelle tâche -->
     <a href="create_task.php" class="btn btn-primary mb-3">Créer une nouvelle tâche</a>
 
-     <!-- Bouton pour créer une nouvelle tâche -->
-     <a href="categories.php" class="btn btn-primary mb-3">Créer une nouvelle catégorie</a>
+    <!-- Bouton pour créer une nouvelle catégorie -->
+    <a href="categories.php" class="btn btn-primary mb-3">Créer une nouvelle catégorie</a>
 
     <!-- Formulaire de filtrage -->
     <form method="GET" action="visual_taches.php" class="row g-3 mb-3">
@@ -85,6 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <th scope="col">Date d'échéance</th>
                 <th scope="col">Statut</th>
                 <th scope="col">Priorité</th>
+                <th scope="col">Catégorie</th> <!-- Nouvelle colonne pour la catégorie -->
                 <th scope="col">Actions</th>
             </tr>
         </thead>
@@ -97,6 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <td><?php echo $task['date_echeance']; ?></td>
                     <td><?php echo $task['statut']; ?></td>
                     <td><?php echo $task['priorite']; ?></td>
+                    <td><?php echo $task['category_name']; ?></td> <!-- Affichage de la catégorie -->
                     <td>
                         <!-- Formulaire pour mettre à jour le statut de la tâche -->
                         <?php if ($task['statut'] != 'terminé') : ?>
