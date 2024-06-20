@@ -35,9 +35,13 @@ function redirectToUrl(string $url): never {
     exit();
 }
 
-function getTasks($priorityFilter = '', $statusFilter = '') {
+function getTasks($projet_id = -1, $priorityFilter = '', $statusFilter = '',) {
     global $dbh;
-    $sql = 'SELECT * FROM taches WHERE 1=1';
+
+    $sql = 'SELECT * FROM taches WHERE 1 = 1';
+    if($projet_id != -1) {
+        $sql .= ' AND id_projet = :id_projet';
+    }
     if ($priorityFilter) {
         $sql .= ' AND priorite = :priorite';
     }
@@ -50,6 +54,9 @@ function getTasks($priorityFilter = '', $statusFilter = '') {
     }
     if ($statusFilter) {
         $stmt->bindParam(':statut', $statusFilter);
+    }
+    if($projet_id != -1) {
+        $stmt->bindParam(':id_projet', $projet_id);
     }
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
