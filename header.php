@@ -11,7 +11,7 @@
                 </li>
                 <?php if (isset($_SESSION['LOGGED_USER'])) : ?>
                     <li class="nav-item">
-                        <a class="nav-link" href="logout.php">Déconnexion</a>
+                        <a class="nav-link" href="logout.php">Déconnexion <?php $_SESSION['LOGGED_USER']['email']?> </a>
                     </li>
                 <?php endif; ?>
             </ul>
