@@ -15,7 +15,7 @@ $projectId = isset($_GET['projet_id']) ? intval($_GET['projet_id']) : 0;
 // Initialiser les filtres
 $priorityFilter = isset($_GET['priorite']) ? $_GET['priorite'] : '';
 $statusFilter = isset($_GET['statut']) ? $_GET['statut'] : '';
-$id_projet = $_GET["projet_id"];
+$id_projet = isset($_GET["projet_id"]) ? $_GET['projet_id'] : -1;
 
 // Charger les tâches avec filtres
 $tasks = getTasks($id_projet, $priorityFilter, $statusFilter);
