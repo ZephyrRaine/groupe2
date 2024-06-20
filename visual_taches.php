@@ -6,9 +6,10 @@ require_once(__DIR__ . '/functions.php');
 // Initialiser les filtres
 $priorityFilter = isset($_GET['priorite']) ? $_GET['priorite'] : '';
 $statusFilter = isset($_GET['statut']) ? $_GET['statut'] : '';
+$id_projet = $_GET["projet_id"];
 
 // Charger les tâches avec filtres
-$tasks = getTasks($priorityFilter, $statusFilter);
+$tasks = getTasks($id_projet, $priorityFilter, $statusFilter);
 
 // Vérification si une action de mise à jour de statut est demandée
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
