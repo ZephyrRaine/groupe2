@@ -3,6 +3,15 @@ session_start();
 require_once(__DIR__ . '/config/mysql.php');
 require_once(__DIR__ . '/functions.php');
 
+// Vérifiez si l'utilisateur est connecté
+if (!isset($_SESSION['LOGGED_USER'])) {
+    header('Location: login.php');
+    exit;
+}
+
+// Récupérer le projet_id de l'URL
+$projectId = isset($_GET['projet_id']) ? intval($_GET['projet_id']) : 0;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['nom'];
     $description = $_POST['description'];
@@ -10,9 +19,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $date_echeance = $_POST['date_echeance'];
     $statut = 'en cours';
     $priorite = $_POST['priorite'];
+    $id_utilisateur = $_SESSION['LOGGED_USER']['id'];
+    $id_projet = $projectId; // Utiliser le projectId récupéré de l'URL
 
-    createTask($name, $description, $date_creation, $date_echeance, $statut, $priorite);
-    header('Location: visual_taches.php');
+    createTask($name, $description, $date_creation, $date_echeance, $statut, $priorite, $id_utilisateur, $id_projet);
+    header('Location: visual_taches.php?projet_id=' . $id_projet);
     exit;
 }
 ?>
@@ -32,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php require_once(__DIR__ . '/header.php'); ?>
     <h1>Créer une nouvelle tâche</h1>
 
-    <form method="POST" action="create_task.php">
+    <form method="POST" action="create_task.php?projet_id=<?php echo $projectId; ?>">
         <div class="mb-3">
             <label for="nom" class="form-label">Nom</label>
             <input type="text" class="form-control" id="nom" name="nom" required>

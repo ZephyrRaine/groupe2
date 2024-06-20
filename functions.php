@@ -82,17 +82,20 @@ function deleteTask($taskId) {
     return $stmt->execute();
 }
 
-function createTask($name, $description, $date_creation, $date_echeance, $statut, $priorite) {
+function createTask($name, $description, $date_creation, $date_echeance, $statut, $priorite, $id_utilisateur, $id_projet) {
     global $dbh;
-    $stmt = $dbh->prepare('INSERT INTO taches (nom, description, date_creation, date_echeance, statut, priorite) VALUES (:nom, :description, :date_creation, :date_echeance, :statut, :priorite)');
+    $stmt = $dbh->prepare('INSERT INTO taches (nom, description, date_creation, date_echeance, statut, priorite, id_utilisateur, id_projet) VALUES (:nom, :description, :date_creation, :date_echeance, :statut, :priorite, :id_utilisateur, :id_projet)');
     $stmt->bindParam(':nom', $name);
     $stmt->bindParam(':description', $description);
     $stmt->bindParam(':date_creation', $date_creation);
     $stmt->bindParam(':date_echeance', $date_echeance);
     $stmt->bindParam(':statut', $statut);
     $stmt->bindParam(':priorite', $priorite);
+    $stmt->bindParam(':id_utilisateur', $id_utilisateur);
+    $stmt->bindParam(':id_projet', $id_projet);
     return $stmt->execute();
 }
+
 
 function updateTaskStatus($id, $newStatus) {
     global $dbh;
