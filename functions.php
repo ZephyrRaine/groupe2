@@ -38,7 +38,7 @@ function redirectToUrl(string $url): never {
 function getTasks($projet_id = -1, $priorityFilter = '', $statusFilter = '',) 
 {
     global $dbh;
-    $sql = 'SELECT taches.nom FROM taches JOIN categories ON taches.id_categorie = categories.id WHERE 1=1';
+    $sql = 'SELECT  *, taches.nom as tache_name, categories.nom as categorie_name FROM taches JOIN categories ON taches.id_categorie = categories.id WHERE 1=1';
     if($projet_id != -1) {
         $sql .= ' AND id_projet = :id_projet';
     }

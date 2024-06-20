@@ -100,12 +100,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <tbody>
             <?php foreach ($tasks as $tache) : ?>
                 <tr>
-                    <td><?php echo htmlspecialchars($tache['nom'] ?? ''); ?></td>
+                    <td><?php echo htmlspecialchars($tache['tache_name'] ?? ''); ?></td>
                     <td><?php echo htmlspecialchars($tache['description'] ?? ''); ?></td>
                     <td><?php echo htmlspecialchars($tache['date_creation'] ?? ''); ?></td>
                     <td><?php echo htmlspecialchars($tache['date_echeance'] ?? ''); ?></td>
                     <td><?php echo htmlspecialchars($tache['statut'] ?? ''); ?></td>
                     <td><?php echo htmlspecialchars($tache['priorite'] ?? ''); ?></td>
+                    <td><?php echo htmlspecialchars($tache['categorie_name'] ?? ''); ?></td>
                     <td>
                         <form action="visual_taches.php?projet_id=<?php echo $projectId; ?>" method="POST" style="display:inline;">
                             <input type="hidden" name="action" value="update_status">
