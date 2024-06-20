@@ -53,6 +53,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php require_once(__DIR__ . '/header.php'); ?>
     <h1>Visualisation des tâches</h1>
 
+    <!-- Bouton pour créer une nouvelle tâche -->
+    <a href="create_task.php?projet_id=<?php echo $projectId; ?>" class="btn btn-primary mb-3">Créer une nouvelle tâche</a>
+    <a href="categories.php" class="btn btn-primary mb-3">Créer une nouvelle catégorie</a>
     <!-- Filtre de priorités et de statut -->
     <form method="GET" action="visual_taches.php" class="mb-3">
         <input type="hidden" name="projet_id" value="<?php echo $projectId; ?>">
@@ -80,9 +83,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </form>
 
-    <!-- Bouton pour créer une nouvelle tâche -->
-    <a href="create_task.php?projet_id=<?php echo $projectId; ?>" class="btn btn-primary mb-3">Créer une nouvelle tâche</a>
-
     <!-- Affichage des tâches -->
     <table class="table">
         <thead>
@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($taches as $tache) : ?>
+            <?php foreach ($tasks as $tache) : ?>
                 <tr>
                     <td><?php echo htmlspecialchars($tache['nom'] ?? ''); ?></td>
                     <td><?php echo htmlspecialchars($tache['description'] ?? ''); ?></td>
