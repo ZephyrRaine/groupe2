@@ -18,6 +18,7 @@
 <?php
 session_start();
 require_once(__DIR__ . '/config/mysql.php');
+
 function display_message($message, $type = 'error') {
     $color = $type === 'error' ? 'red' : 'green';
     echo "<div style='background-color: $color; color: white; padding: 10px; border-radius: 5px; text-align: center; margin: 10px 0;'>$message</div>";
@@ -46,6 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute();
         $count = $stmt->fetchColumn();
 
+        // Ajout du message de débogage
         if ($count > 0) {
             display_message('Cette adresse email est déjà utilisée');
             exit;
